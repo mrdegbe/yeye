@@ -43,11 +43,11 @@ const AppRoutes = () => {
       />
       <Route 
         path="/login" 
-        element={user ? <Navigate to="/" replace /> : <Login />} 
+        element={!user ? <Login /> : <Navigate to="/" replace />} 
       />
       <Route 
         path="/register" 
-        element={user ? <Navigate to="/" replace /> : <Register />} 
+        element={!user ? <Register /> : <Navigate to="/" replace />} 
       />
       <Route 
         path="/client" 
