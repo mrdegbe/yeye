@@ -46,11 +46,11 @@ export const api = {
       body: JSON.stringify({ service_id, scheduled_time }),
     }),
 
-  getMyBookings: () => apiRequest('/bookings/me'),
+  // getMyBookings: () => apiRequest('/api/bookings/me'),
 
   // Provider
-  toggleAvailability: (is_available: boolean) =>
-    apiRequest('/providers/availability', {
+  toggleAvailability: (userId: number, is_available: boolean) =>
+    apiRequest(`/api/users/${userId}/availability`, {
       method: 'PATCH',
       body: JSON.stringify({ is_available }),
     }),

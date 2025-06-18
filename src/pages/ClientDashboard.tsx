@@ -50,12 +50,12 @@ const ClientDashboard: React.FC = () => {
   };
 
   const fetchBookings = async () => {
-    try {
-      const data = await api.getMyBookings();
-      setBookings(data.bookings || []);
-    } catch (error) {
-      console.error('Error fetching bookings:', error);
-    }
+    // try {
+    //   const data = await api.getMyBookings();
+    //   setBookings(data.bookings || []);
+    // } catch (error) {
+    //   console.error('Error fetching bookings:', error);
+    // }
   };
 
   const handleBookService = async (e: React.FormEvent) => {

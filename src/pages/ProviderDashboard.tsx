@@ -22,7 +22,7 @@ interface Booking {
 const ProviderDashboard: React.FC = () => {
   const { user } = useAuth();
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [isAvailable, setIsAvailable] = useState(true);
+  const [isAvailable, setIsAvailable] = useState(user.is_available);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -31,18 +31,20 @@ const ProviderDashboard: React.FC = () => {
   }, []);
 
   const fetchBookings = async () => {
-    try {
-      const data = await api.getMyBookings();
-      setBookings(data.bookings || []);
-    } catch (error) {
-      console.error('Error fetching bookings:', error);
-    }
+    // try {
+    //   const data = await api.getMyBookings();
+    //   setBookings(data.bookings || []);
+    // } catch (error) {
+    //   console.error('Error fetching bookings:', error);
+    // }
   };
 
   const toggleAvailability = async () => {
     setIsLoading(true);
+
     try {
-      await api.toggleAvailability(!isAvailable);
+      const userId = user.id
+      await api.toggleAvailability(userId, !isAvailable);
       setIsAvailable(!isAvailable);
       toast({
         title: "Availability updated",

@@ -3,10 +3,11 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { api } from '../utils/api';
 
 interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
   role: 'client' | 'provider';
+  is_available?: boolean;
 }
 
 interface AuthContextType {
