@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../utils/api';
@@ -9,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import Header from '../components/Header';
-import { Calendar, Clock, User, CheckCircle, XCircle } from 'lucide-react';
+import { Calendar, Clock, User, CheckCircle, XCircle, Plus, Minus } from 'lucide-react';
 
 interface Booking {
   id: string;
@@ -19,32 +18,121 @@ interface Booking {
   status: string;
 }
 
+interface Service {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+}
+
+interface ProviderService {
+  id: string;
+  provider_id: number;
+  service_id: string;
+  service: Service;
+}
+
 const ProviderDashboard: React.FC = () => {
   const { user } = useAuth();
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [isAvailable, setIsAvailable] = useState(user.is_available);
+  const [allServices, setAllServices] = useState<Service[]>([]);
+  const [myServices, setMyServices] = useState<ProviderService[]>([]);
+  const [isAvailable, setIsAvailable] = useState(user?.is_available || false);
   const [isLoading, setIsLoading] = useState(false);
+  const [servicesLoading, setServicesLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     fetchBookings();
+    fetchServices();
+    fetchMyServices();
   }, []);
 
   const fetchBookings = async () => {
-    // try {
-    //   const data = await api.getMyBookings();
-    //   setBookings(data.bookings || []);
-    // } catch (error) {
-    //   console.error('Error fetching bookings:', error);
-    // }
+    // Bookings functionality will be implemented later
+    console.log('Fetching bookings...');
+  };
+
+  const fetchServices = async () => {
+    try {
+      const data = await api.getServices();
+      setAllServices(data.services || []);
+    } catch (error) {
+      console.error('Error fetching services:', error);
+      toast({
+        title: "Error",
+        description: "Could not load available services.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const fetchMyServices = async () => {
+    if (!user) return;
+    
+    try {
+      const data = await api.getProviderServices(user.id);
+      setMyServices(data.provider_services || []);
+    } catch (error) {
+      console.error('Error fetching my services:', error);
+      toast({
+        title: "Error",
+        description: "Could not load your services.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const addService = async (serviceId: string) => {
+    if (!user) return;
+    
+    setServicesLoading(true);
+    try {
+      await api.addProviderService(user.id, serviceId);
+      await fetchMyServices();
+      toast({
+        title: "Service added",
+        description: "Service has been added to your offerings.",
+      });
+    } catch (error) {
+      console.error('Error adding service:', error);
+      toast({
+        title: "Error",
+        description: "Could not add service. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setServicesLoading(false);
+    }
+  };
+
+  const removeService = async (providerServiceId: string) => {
+    setServicesLoading(true);
+    try {
+      await api.removeProviderService(providerServiceId);
+      await fetchMyServices();
+      toast({
+        title: "Service removed",
+        description: "Service has been removed from your offerings.",
+      });
+    } catch (error) {
+      console.error('Error removing service:', error);
+      toast({
+        title: "Error",
+        description: "Could not remove service. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setServicesLoading(false);
+    }
   };
 
   const toggleAvailability = async () => {
+    if (!user) return;
+    
     setIsLoading(true);
-
     try {
-      const userId = user.id
-      await api.toggleAvailability(userId, !isAvailable);
+      await api.toggleAvailability(user.id, !isAvailable);
       setIsAvailable(!isAvailable);
       toast({
         title: "Availability updated",
@@ -69,6 +157,9 @@ const ProviderDashboard: React.FC = () => {
     new Date(booking.scheduled_time) <= new Date()
   );
 
+  const myServiceIds = myServices.map(ms => ms.service_id);
+  const availableServices = allServices.filter(service => !myServiceIds.includes(service.id));
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -76,7 +167,7 @@ const ProviderDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Provider Dashboard</h1>
-          <p className="text-gray-600 mt-2">Manage your availability and view appointments</p>
+          <p className="text-gray-600 mt-2">Manage your availability, services, and view appointments</p>
         </div>
 
         {/* Availability Toggle */}
@@ -114,6 +205,85 @@ const ProviderDashboard: React.FC = () => {
           </CardContent>
         </Card>
 
+        {/* Service Management */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Available Services */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Available Services</CardTitle>
+              <CardDescription>
+                Services you can add to your offerings
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {availableServices.length === 0 ? (
+                  <p className="text-gray-500 text-center py-4">
+                    All services are already in your offerings
+                  </p>
+                ) : (
+                  availableServices.map((service) => (
+                    <div key={service.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <h4 className="font-medium">{service.name}</h4>
+                        <p className="text-sm text-gray-600">{service.description}</p>
+                        <p className="text-sm font-medium text-green-600">${service.price}</p>
+                      </div>
+                      <Button
+                        size="sm"
+                        onClick={() => addService(service.id)}
+                        disabled={servicesLoading}
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
+                        Add
+                      </Button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* My Services */}
+          <Card>
+            <CardHeader>
+              <CardTitle>My Services ({myServices.length})</CardTitle>
+              <CardDescription>
+                Services you currently offer
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {myServices.length === 0 ? (
+                  <p className="text-gray-500 text-center py-4">
+                    No services added yet
+                  </p>
+                ) : (
+                  myServices.map((providerService) => (
+                    <div key={providerService.id} className="flex items-center justify-between p-3 border rounded-lg bg-blue-50">
+                      <div>
+                        <h4 className="font-medium">{providerService.service.name}</h4>
+                        <p className="text-sm text-gray-600">{providerService.service.description}</p>
+                        <p className="text-sm font-medium text-green-600">${providerService.service.price}</p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => removeService(providerService.id)}
+                        disabled={servicesLoading}
+                      >
+                        <Minus className="h-4 w-4 mr-1" />
+                        Remove
+                      </Button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Bookings Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Upcoming Bookings */}
           <div>
