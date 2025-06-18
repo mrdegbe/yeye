@@ -12,7 +12,7 @@ import Header from '../components/Header';
 import { Calendar, Clock, User } from 'lucide-react';
 
 interface Service {
-  id: string;
+  id: number;
   name: string;
   description: string;
   price?: number;
@@ -50,14 +50,15 @@ const ClientDashboard: React.FC = () => {
   };
 
   const fetchBookings = async () => {
-    // try {
-    //   const data = await api.getMyBookings();
-    //   setBookings(data.bookings || []);
-    // } catch (error) {
-    //   console.error('Error fetching bookings:', error);
-    // }
+    try {
+      const data = await api.getMyBookings(user.id);
+      setBookings(data.bookings || []);
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
+    }
   };
 
+  // Working 100
   const handleBookService = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedService || !scheduledTime) return;
@@ -71,7 +72,6 @@ const ClientDashboard: React.FC = () => {
       });
       setSelectedService(null);
       setScheduledTime('');
-      fetchBookings();
     } catch (error) {
       toast({
         title: "Booking failed",

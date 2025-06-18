@@ -39,6 +39,9 @@ export const api = {
   // Services
   getServices: () => apiRequest('/api/services'),
 
+  // Bookings
+  getMyBookings: (client_id) => apiRequest(`/api/bookings/client/${client_id}`),
+
   // Provider-Services
   getProviderServices: (provider_id: number) => 
     apiRequest(`/api/provider-services?provider_id=${provider_id}`),
@@ -54,17 +57,19 @@ export const api = {
       method: 'DELETE',
     }),
 
-  // Bookings
-  createBooking: (service_id: string, scheduled_time: string) =>
+  // POST Bookings
+  createBooking: (service_id: number, scheduled_time: string) =>
     apiRequest('/api/bookings', {
       method: 'POST',
       body: JSON.stringify({ service_id, scheduled_time }),
     }),
 
-  // Provider
+  // Provider (Working 100%)
   toggleAvailability: (userId: number, is_available: boolean) =>
     apiRequest(`/api/users/${userId}/availability`, {
       method: 'PATCH',
       body: JSON.stringify({ is_available }),
     }),
+
+  
 };
