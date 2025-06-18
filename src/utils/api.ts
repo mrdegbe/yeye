@@ -1,5 +1,5 @@
 
-const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
   const token = localStorage.getItem('token');
@@ -37,11 +37,11 @@ export const api = {
     }),
 
   // Services
-  getServices: () => apiRequest('/services'),
+  getServices: () => apiRequest('/api/services'),
 
   // Bookings
   createBooking: (service_id: string, scheduled_time: string) =>
-    apiRequest('/bookings', {
+    apiRequest('/api/bookings', {
       method: 'POST',
       body: JSON.stringify({ service_id, scheduled_time }),
     }),
