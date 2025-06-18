@@ -25,13 +25,13 @@ export const apiRequest = async (endpoint: string, options: RequestInit = {}) =>
 export const api = {
   // Auth
   login: (email: string, password: string) =>
-    apiRequest('/auth/login', {
+    apiRequest('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     }),
 
   register: (name: string, email: string, password: string, role: 'client' | 'provider') =>
-    apiRequest('/auth/register', {
+    apiRequest('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify({ name, email, password, role }),
     }),
