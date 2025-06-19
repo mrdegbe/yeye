@@ -38,7 +38,7 @@ const ClientDashboard: React.FC = () => {
   useEffect(() => {
     fetchServices();
     fetchBookings();
-  }, [bookings]);
+  }, [bookings, services]);
 
   const fetchServices = async () => {
     try {
