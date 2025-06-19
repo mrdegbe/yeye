@@ -22,7 +22,7 @@ const Login: React.FC = () => {
       await login(email, password);
       toast({
         title: "Login successful!",
-        description: "Welcome back to ServiceHub.",
+        description: "Welcome back to Yɛyɛ.",
       });
     } catch (error) {
       toast({
@@ -34,13 +34,14 @@ const Login: React.FC = () => {
       setIsLoading(false);
     }
   };
+  // console.log(process.env.VITE_API_BASE_URL)
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-blue-600">Welcome Back</CardTitle>
-          <CardDescription>Sign in to your ServiceHub account</CardDescription>
+          <CardDescription>Sign in to your Yɛyɛ account</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">

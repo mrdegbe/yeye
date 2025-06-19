@@ -25,7 +25,7 @@ const Register: React.FC = () => {
       await register(name, email, password, role);
       toast({
         title: "Registration successful!",
-        description: "Welcome to ServiceHub.",
+        description: "Welcome to Yɛyɛ.",
       });
     } catch (error) {
       toast({
@@ -42,7 +42,7 @@ const Register: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-100 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-green-600">Join ServiceHub</CardTitle>
+          <CardTitle className="text-2xl font-bold text-green-600">Join Yɛyɛ</CardTitle>
           <CardDescription>Create your account to get started</CardDescription>
         </CardHeader>
         <CardContent>
