@@ -19,7 +19,7 @@ const Header: React.FC = () => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <User className="h-5 w-5 text-gray-500" />
-                <span className="text-gray-700 font-medium">{user.name}</span>
+                <span className="text-gray-700 font-medium">{user.name.split(' ')[0]}</span>
                 <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full capitalize">
                   {user.role}
                 </span>
@@ -31,7 +31,7 @@ const Header: React.FC = () => {
                 className="flex items-center space-x-2"
               >
                 <LogOut className="h-4 w-4" />
-                <span>Logout</span>
+                {/* <span>Logout</span> */}
               </Button>
             </div>
           )}
